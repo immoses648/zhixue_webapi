@@ -57,8 +57,7 @@ def web_get_exam_detail(request):
         }
         return status_ok(result)
     except Exception as err:
-        return HttpResponseBadRequest(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -101, '获取考试信息失败', stu)
 
 
 def web_get_marking_progress(request):
@@ -91,8 +90,7 @@ def web_get_marking_progress(request):
             })
         return status_ok(result)
     except Exception as err:
-        return HttpResponseBadRequest(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -102, '获取考试阅卷情况失败', stu)
 
 
 def web_get_school_exam_classes(request):
@@ -112,8 +110,7 @@ def web_get_school_exam_classes(request):
             )
         return status_ok(result)
     except Exception as err:
-        return HttpResponseBadRequest(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -103, '获取参考班级失败', stu)
 
 
 def web_get_scores(request):
@@ -153,8 +150,7 @@ def web_get_scores(request):
             result.append(stu_scores)
         return status_ok(result)
     except Exception as err:
-        return HttpResponseBadRequest(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -104, '获取考试分数失败', stu)
 
 
 def web_get_exam_extra_data(request):
@@ -208,5 +204,4 @@ def web_get_exam_extra_data(request):
             })
         return status_ok(result)
     except Exception as err:
-        return HttpResponseBadRequest(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -104, '获取考试额外数据失败', stu)
