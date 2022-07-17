@@ -3,6 +3,26 @@ from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
+def basic_error(error: Exception, code: int, errMsg: str, target: object) -> HttpResponse:
+    '''
+    抛出基本错误
+    '''
+    result = \
+    {
+        'Result':
+        {
+            'Code': code,
+            'Message': errMsg
+        },
+        'ErrorBody':
+        {
+            'Target': str(target),
+            'Error': str(error)
+        }
+    }
+    return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
+
+
 def stu_login(request):
     try:
         stu = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
@@ -15,21 +35,27 @@ def web_student(request):
     stu = stu_login(request)
     try:
         result = {
-            'id': stu.id,
-            'class': {
-                'id': stu.clazz.id,
-                'name': stu.clazz.name,
-                'school': {
-                    'id': stu.clazz.school.id,
-                    'name': stu.clazz.school.name
+                'Result':
+                {
+                    'Code': 0,
+                    'Message': '操作成功完成'
                 },
-            },
-            'name': stu.name,
-            'gender': str(stu.gender)
-        }
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+                'id': stu.id,
+                'class':
+                {
+                    'id': stu.clazz.id,
+                    'name': stu.clazz.name,
+                    'school':
+                    {
+                        'id': stu.clazz.school.id,
+                        'name': stu.clazz.school.name
+                    },
+                },
+                'name': stu.name,
+                'gender': str(stu.gender)}
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -1, '尝试登录学生账号失败', stu)
 
 
 def web_get_clazz(request):
@@ -37,14 +63,24 @@ def web_get_clazz(request):
     get_clazz = request.GET.get('clazz')
     try:
         original = stu.get_clazz(get_clazz)
-        result = {'id': original.id,
-                 'name': original.name,
-                 'school': {
-                     'id': original.school.id,
-                     'name': original.school.name}}
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        result = \
+            {
+                'Result':
+                {
+                    'Code': 0,
+                    'Message': '操作成功完成'
+                },
+                'id': original.id,
+                'name': original.name,
+                'school':
+                {
+                    'id': original.school.id,
+                    'name': original.school.name
+                }
+            }
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -2, '尝试获得班级失败', stu)
 
 
 def web_get_clazzs(request):
@@ -60,9 +96,9 @@ def web_get_clazzs(request):
                      'id': i.school.id,
                      'name': i.school.name}}
             )
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -3, '尝试获得所有班级失败', stu)
 
 
 def web_get_classmates(request):
@@ -84,11 +120,10 @@ def web_get_classmates(request):
                 },
                 'name': i.name,
                 'gender': str(i.gender)
-            }
-            )
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+            })
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -4, '尝试获得同学失败', stu)
 
 
 def web_get_exam(request):
@@ -103,9 +138,9 @@ def web_get_exam(request):
             'grade_code': str(original.grade_code),
             'is_final': str(original.is_final),
         }
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -5, '尝试获得考试失败', stu)
 
 
 def web_get_exams(request):
@@ -122,9 +157,22 @@ def web_get_exams(request):
                 'is_final': str(i.is_final),
             }
             )
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -6, '尝试获得所有考试失败', stu)
+
+
+def web_get_original(request):
+    stu = stu_login(request)
+    get_exam_name = request.GET.get('exam')
+    get_subject = request.GET.get('subject')
+    try:
+        result = stu.get_original(get_exam_name, get_subject)
+            if len(result) == 0:
+                return basic_error(err, -7, '尝试获得考试原卷失败', stu)
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
+    except Exception as err:
+        return basic_error(err, -7, '尝试获得考试原卷失败', stu)
 
 
 # def web_get_original(request):
@@ -174,6 +222,6 @@ def web_get_self_mark(request):
             },
             "mark": mark
         }
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -7, '尝试获得自身成绩失败', stu)
