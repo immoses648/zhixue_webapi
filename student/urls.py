@@ -10,4 +10,5 @@ urlpatterns = [
     path('exams/', web_get_exams, name='get_exams'),
     path('original/', web_get_original, name='get_original'),
     path('mark/', web_get_self_mark, name='get_self_mark'),
+    path('allSubject/', web_getAllSubjects, name='getAllSubjects')
 ]
