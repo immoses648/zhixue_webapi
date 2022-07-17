@@ -24,7 +24,7 @@ def status_ok(result):
     ret = {
         'Status': {
             'Code': 0,
-            'Msg': '成功'
+            'Message': '成功'
         },
         'Result': result
     }
