@@ -35,13 +35,13 @@ def status_ok(result):
 def stu_login(request):
     try:
         stu = None
-        if request.GET.__contains__("usr") and request.GET.__contains__("pwd"): # 旧版参数
+        if request.GET.__contains__("usr") and request.GET.__contains__("pwd"):  # 旧版参数
             stu = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
         else:
             stu = zxw_login(request.GET.get('user'), request.GET.get('password'))
         return stu
-    except Exception as e:
-        return e
+    except Exception as err:
+        return err
 
 
 def web_student(request):
@@ -217,25 +217,17 @@ def web_get_self_mark(request):
     except Exception as err:
         return basic_error(err, -7, '尝试获得自身成绩失败', stu)
 
-def web_getAllSubjects(request: HttpRequest):
+
+def web_get_all_subjects(request: HttpRequest):
     stu = stu_login(request)
     param = request.GET["param"]
-    data = None
+    original = None
     try:
-        data = stu.get_subjects(param) # 支持传入考试名或ID
+        original = stu.get_subjects(param)  # 支持传入考试名或ID
     except Exception as err:
         return basic_error(err, -8, '尝试获得考试所有学科失败', stu)
-    ret = \
-        {
-            'Result':
-            {
-                'Code': 0,
-                'Message': '操作成功完成'
-            }
-        }
     result = []
-    retdata = []
-    for subj in data:
+    for subj in original:
         result.append(
             {
                 'SubjectName': subj.name,
@@ -243,6 +235,4 @@ def web_getAllSubjects(request: HttpRequest):
                 'SubjectCode': subj.code
             }
         )
-    retdata.append(ret)
-    retdata.append(result)
-    return HttpResponse(json.dumps(retdata, indent=2, ensure_ascii=False), content_type='application/json')
+    return status_ok(result)
