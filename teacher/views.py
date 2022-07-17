@@ -25,7 +25,11 @@ def basic_error(error: Exception, code: int, errMsg: str, target: object) -> Htt
 
 def teacher_login(request):
     try:
-        teacher = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
+        teacher = None
+        if request.GET.__contains__("usr") and request.GET.__contains__("pwd"):
+            teacher = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
+        else:
+            teacher = zxw_login(request.GET.get('user'), request.GET.get('password'))
         return teacher
     except Exception as e:
         return e
