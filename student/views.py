@@ -127,15 +127,15 @@ def web_get_exams(request):
         return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
-def web_get_original(request):
-    stu = stu_login(request)
-    get_exam_name = request.GET.get('exam')
-    get_subject = request.GET.get('subject')
-    try:
-        result = stu.get_original(get_exam_name, get_subject)
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
-    except Exception as err:
-        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+# def web_get_original(request):
+#     stu = stu_login(request)
+#     get_exam_name = request.GET.get('exam')
+#     get_subject = request.GET.get('subject')
+#     try:
+#         result = stu.get_original(get_exam_name, get_subject)
+#         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+#     except Exception as err:
+#         return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_self_mark(request):
