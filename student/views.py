@@ -219,7 +219,7 @@ def web_get_self_mark(request):
 
 def web_get_all_subjects(request: HttpRequest):
     stu = stu_login(request)
-    param = request.GET["param"]
+    param = request.GET.get('exam')
     original = None
     try:
         original = stu.get_subjects(param)  # 支持传入考试名或ID
@@ -229,9 +229,9 @@ def web_get_all_subjects(request: HttpRequest):
     for subj in original:
         result.append(
             {
-                'SubjectName': subj.name,
-                'SubjectId': subj.id,
-                'SubjectCode': subj.code
+                'Name': subj.name,
+                'ID': subj.id,
+                'Code': subj.code
             }
         )
     return status_ok(result)
