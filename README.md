@@ -1,4 +1,4 @@
-# zhixue_webapi
+# 智学网WebAPI
 
 ## 文档
 [语雀](https://www.yuque.com/immoses/ns0n2t/vobe8g)
