@@ -3,24 +3,32 @@ from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
-def basic_error(error: Exception, code: int, errMsg: str, target: object) -> HttpResponse:
+def basic_error(error: Exception, code: int, err_msg: str, target: object) -> HttpResponse:
     """
     抛出基本错误
     """
-    result = \
-    {
-        'Result':
-        {
+    result = {
+        'Status': {
             'Code': code,
-            'Message': errMsg
+            'Message': err_msg
         },
-        'ErrorBody':
-        {
+        'ErrorBody': {
             'Target': str(target),
             'Error': str(error)
         }
     }
     return HttpResponseBadRequest(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
+
+
+def status_ok(result):
+    ret = {
+        'Status': {
+            'Code': 0,
+            'Msg': '成功'
+        },
+        'Result': result
+    }
+    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False), content_type='application/json')
 
 
 def teacher_login(request):
@@ -43,7 +51,7 @@ def web_get_exam_detail(request):
             'GradeCode': original.grade_code,
             'IsFinal': original.is_final,
         }
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return status_ok(result)
     except Exception as err:
         return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
@@ -79,7 +87,7 @@ def web_get_marking_progress(request):
                 'CompleteCount': i.lete_count,
                 'UncompleteCount': i.uncomplete_count,
             })
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return status_ok(result)
     except Exception as err:
         return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
@@ -100,7 +108,7 @@ def web_get_school_exam_classes(request):
                      'ID': i.school.id,
                      'Name': i.school.name}}
             )
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return status_ok(result)
     except Exception as err:
         return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
@@ -141,7 +149,7 @@ def web_get_scores(request):
                     "ExamRank": j.exam_rank,
                 })
             result.append(stu_scores)
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return status_ok(result)
     except Exception as err:
         return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
@@ -196,7 +204,7 @@ def web_get_exam_extra_data(request):
                     "Var": i.exam_extra_data.var,
                 },
             })
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return status_ok(result)
     except Exception as err:
         return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
