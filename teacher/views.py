@@ -1,6 +1,26 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
+
+
+def basic_error(error: Exception, code: int, errMsg: str, target: object) -> HttpResponse:
+    '''
+    抛出基本错误
+    '''
+    result = \
+    {
+        'Result':
+        {
+            'Code': code,
+            'Message': errMsg
+        },
+        'ErrorBody':
+        {
+            'Target': str(target),
+            'Error': str(error)
+        }
+    }
+    return HttpResponseBadRequest(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
 
 
 def teacher_login(request):
