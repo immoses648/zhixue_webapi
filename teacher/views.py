@@ -45,7 +45,7 @@ def web_get_exam_detail(request):
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -81,7 +81,7 @@ def web_get_marking_progress(request):
             })
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -102,7 +102,7 @@ def web_get_school_exam_classes(request):
             )
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -143,7 +143,7 @@ def web_get_scores(request):
             result.append(stu_scores)
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -156,7 +156,6 @@ def web_get_exam_extra_data(request):
         for i in original:
             class_data = []
             school_data = []
-            exam_data = []
             for j in i.class_extra_data:
                 class_data.append({
                     "avg_score": j.avg_score,
@@ -199,5 +198,5 @@ def web_get_exam_extra_data(request):
             })
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))

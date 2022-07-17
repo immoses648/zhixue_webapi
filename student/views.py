@@ -1,5 +1,5 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
@@ -168,9 +168,22 @@ def web_get_original(request):
     get_subject = request.GET.get('subject')
     try:
         result = stu.get_original(get_exam_name, get_subject)
+            if len(result) == 0:
+                return basic_error(err, -7, '尝试获得考试原卷失败', stu)
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
         return basic_error(err, -7, '尝试获得考试原卷失败', stu)
+
+
+# def web_get_original(request):
+#     stu = stu_login(request)
+#     get_exam_name = request.GET.get('exam')
+#     get_subject = request.GET.get('subject')
+#     try:
+#         result = stu.get_original(get_exam_name, get_subject)
+#         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+#     except Exception as err:
+#         return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_self_mark(request):
