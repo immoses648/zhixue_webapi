@@ -136,7 +136,7 @@ def web_get_exam(request):
             'Name': original.name,
             'Status': str(original.status),
             'GradeCode': str(original.grade_code),
-            'IsFinal': str(original.is_final),
+            'IsFinal': original.is_final,
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
