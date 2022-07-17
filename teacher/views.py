@@ -136,7 +136,6 @@ def web_get_exam_extra_data(request):
         for i in original:
             class_data = []
             school_data = []
-            exam_data = []
             for j in i.class_extra_data:
                 class_data.append({
                     "avg_score": j.avg_score,
