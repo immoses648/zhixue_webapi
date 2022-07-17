@@ -88,8 +88,6 @@ def web_get_marking_progress(request):
                 'CompletePrecent': i.complete_precent,
                 'SubjectID': i.subject_id,
                 'Teachers': teachers_ls,
-                'CompleteCount': i.lete_count,
-                'UncompleteCount': i.uncomplete_count,
             })
         return status_ok(result)
     except Exception as err:
