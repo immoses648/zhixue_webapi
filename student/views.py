@@ -8,12 +8,11 @@ def basic_error(error: Exception, code: int, err_msg: str, target: object) -> Ht
     抛出基本错误
     """
     result = {
-        'Result': {
+        'Status': {
             'Code': code,
             'Message': err_msg
         },
-        'ErrorBody':
-        {
+        'ErrorBody': {
             'Target': str(target),
             'Error': str(error)
         }
@@ -25,7 +24,7 @@ def status_ok(result):
     ret = {
         'Status': {
             'Code': 0,
-            'Msg': '成功'
+            'Message': '成功'
         },
         'Result': result
     }
