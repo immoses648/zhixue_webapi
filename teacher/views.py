@@ -4,9 +4,9 @@ import json
 
 
 def basic_error(error: Exception, code: int, errMsg: str, target: object) -> HttpResponse:
-    '''
+    """
     抛出基本错误
-    '''
+    """
     result = \
     {
         'Result':
