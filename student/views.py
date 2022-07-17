@@ -1,5 +1,5 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
@@ -29,7 +29,7 @@ def web_student(request):
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_clazz(request):
@@ -44,7 +44,7 @@ def web_get_clazz(request):
                      'name': original.school.name}}
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_clazzs(request):
@@ -62,7 +62,7 @@ def web_get_clazzs(request):
             )
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_classmates(request):
@@ -88,7 +88,7 @@ def web_get_classmates(request):
             )
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_exam(request):
@@ -105,7 +105,7 @@ def web_get_exam(request):
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_exams(request):
@@ -124,7 +124,7 @@ def web_get_exams(request):
             )
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_original(request):
@@ -135,7 +135,7 @@ def web_get_original(request):
         result = stu.get_original(get_exam_name, get_subject)
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
 def web_get_self_mark(request):
@@ -176,4 +176,4 @@ def web_get_self_mark(request):
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return HttpResponseBadRequest(json.dumps({'login_error': str(stu), 'run_error': str(err)}, indent=2, ensure_ascii=False))

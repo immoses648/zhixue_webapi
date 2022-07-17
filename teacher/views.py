@@ -1,5 +1,5 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
@@ -25,7 +25,7 @@ def web_get_exam_detail(request):
         }
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -61,7 +61,7 @@ def web_get_marking_progress(request):
             })
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -82,7 +82,7 @@ def web_get_school_exam_classes(request):
             )
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -123,7 +123,7 @@ def web_get_scores(request):
             result.append(stu_scores)
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
 
 
@@ -179,5 +179,5 @@ def web_get_exam_extra_data(request):
             })
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as err:
-        return HttpResponse(
+        return HttpResponseBadRequest(
             json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
