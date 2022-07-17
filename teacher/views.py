@@ -127,6 +127,7 @@ def web_get_scores(request):
                     "Subject": {
                         "Name": j.subject.name,
                         "Code": j.subject.code,
+                        "ID": j.subject.id,
                         "StandardScore": j.subject.standard_score,
 
                     },
