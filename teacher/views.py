@@ -1,6 +1,8 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpRequest, Http404
 import json
+from nanoid import generate
+import os
 
 
 def basic_error(error: Exception, code: int, errMsg: str, target: object) -> HttpResponse:
@@ -25,7 +27,7 @@ def basic_error(error: Exception, code: int, errMsg: str, target: object) -> Htt
 
 def teacher_login(request):
     try:
-        teacher = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
+        teacher = zxw_login(request.GET.get('user'), request.GET.get('password'))
         return teacher
     except Exception as e:
         return e
@@ -43,10 +45,9 @@ def web_get_exam_detail(request):
             'grade_code': original.grade_code,
             'is_final': original.is_final,
         }
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponse(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -8, '教师尝试获取考试信息时发生了错误', str(teacher))
 
 
 def web_get_marking_progress(request):
@@ -79,10 +80,9 @@ def web_get_marking_progress(request):
                 'lete_count': i.lete_count,
                 'uncomplete_count': i.uncomplete_count,
             })
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponse(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -9, '尝试获取教师批改进度时发生错误', str(teacher))
 
 
 def web_get_school_exam_classes(request):
@@ -100,10 +100,9 @@ def web_get_school_exam_classes(request):
                      'id': i.school.id,
                      'name': i.school.name}}
             )
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponse(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -10, '尝试获得学校所有考试班级时发生错误', str(teacher))
 
 
 def web_get_scores(request):
@@ -141,10 +140,9 @@ def web_get_scores(request):
                     "exam_rank": j.exam_rank,
                 })
             result.append(stu_scores)
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponse(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -11, '教师获取分数时发生错误', str(teacher))
 
 
 def web_get_exam_extra_data(request):
@@ -197,7 +195,36 @@ def web_get_exam_extra_data(request):
                     "var": i.exam_extra_data.var,
                 },
             })
-        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False))
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
-        return HttpResponse(
-            json.dumps({'login_error': str(teacher), 'run_error': str(err)}, indent=2, ensure_ascii=False))
+        return basic_error(err, -12, '教师获取考试其他信息时发生错误', str(teacher))
+
+def web_teacher_original(request: HttpRequest):
+    tea = teacher_login(request)
+    userId = request.GET["userId"]
+    subjectId = request.GET["subjectId"]
+    saveId = generate() # 保存位置
+    try:
+        tea.get_original_paper(userId, subjectId, './teacher/cache/' + saveId + ".html")
+        data = ""
+        with open("./teacher/cache/" + saveId + ".html", encoding='utf-8') as cardrdr:
+            x = cardrdr.readlines()
+            for l in x:
+                data = data + "\n" + l
+        result = \
+            {
+                'Result':
+                {
+                    'Code': 0,
+                    'Message': '操作成功完成'
+                },
+                'DataBody': data
+            }
+        removeCache(saveId)
+        return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
+    except Exception as err:
+        return basic_error(err, -14, '获取原卷时发生错误', tea.username)
+
+
+def removeCache(id: str):
+    os.remove('./teacher/cache/' + id + ".html")

@@ -1,5 +1,5 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpRequest
 import json
 
 
@@ -20,12 +20,12 @@ def basic_error(error: Exception, code: int, errMsg: str, target: object) -> Htt
             'Error': str(error)
         }
     }
-    return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
+    return HttpResponseBadRequest(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
 
 
 def stu_login(request):
     try:
-        stu = zxw_login(request.GET.get('usr'), request.GET.get('pwd'))
+        stu = zxw_login(request.GET.get('user'), request.GET.get('password'))
         return stu
     except Exception as e:
         return e
@@ -108,7 +108,12 @@ def web_get_classmates(request):
         original = stu.get_classmates(get_clazz)
         result = []
         for i in original:
-            result.append({
+            result.append({                
+                'Result':
+                {
+                    'Code': 0,
+                    'Message': '操作成功完成'
+                },
                 'id': i.id,
                 'class': {
                     'id': i.clazz.id,
@@ -132,6 +137,11 @@ def web_get_exam(request):
     try:
         original = stu.get_exam(get_exam_name)
         result = {
+            'Result':
+                {
+                    'Code': 0,
+                    'Message': '操作成功完成'
+                },
             'id': original.id,
             'name': original.name,
             'status': str(original.status),
@@ -148,6 +158,13 @@ def web_get_exams(request):
     try:
         original = stu.get_exams()
         result = []
+        result.append({
+            'Result':
+            {
+                'Code': 0,
+                'Message': '操作成功完成'
+            }}
+        )
         for i in original:
             result.append({
                 'id': i.id,
@@ -168,6 +185,8 @@ def web_get_original(request):
     get_subject = request.GET.get('subject')
     try:
         result = stu.get_original(get_exam_name, get_subject)
+        if len(result) == 0: # 学校设置无法获取原卷
+            return basic_error(Exception(), -13, '学校禁止获得此考试的原卷，请使用教师账号', "examId: " + get_exam_name + ",subjId: " + get_subject)
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
         return basic_error(err, -7, '尝试获得考试原卷失败', stu)
@@ -195,6 +214,11 @@ def web_get_self_mark(request):
                 }
             )
         result = {
+            'Result':
+            {
+                    'Code': 0,
+                    'Message': '操作成功完成'
+            },
             "person": {
                 "name": original.person.name,
                 "id": original.person.id,
@@ -212,3 +236,34 @@ def web_get_self_mark(request):
         return HttpResponse(json.dumps(result, indent=2, ensure_ascii=False), content_type='application/json')
     except Exception as err:
         return basic_error(err, -7, '尝试获得自身成绩失败', stu)
+
+
+def web_getAllSubjects(request: HttpRequest):
+    '''
+    获取某场考试的全部学科
+    '''
+    param = request.GET["param"]
+    user = request.GET["user"]
+    pwd = request.GET["password"]
+
+    stu = zxw_login(user, pwd)
+    subjs = stu.get_subjects(param)
+    result :list = \
+        {
+            'Result':
+            {
+                'Code': 0,
+                'Message': '操作成功完成'
+            }
+        }
+    ret = []
+    for subj in subjs:
+        app = \
+            {
+                'SubjectName': subj.name,
+                'SubjectCode': subj.code,
+                'SubjectId': subj.id,
+            }
+        ret.append(app)
+    ret.append(result)
+    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False), content_type='application/json')
