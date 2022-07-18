@@ -260,18 +260,18 @@ def web_get_all_subjects(request):
         return basic_error(Exception("必传参数错误"), -9, '获取所有科目失败')
     try:
         original = stu.get_subjects(get_exam)  # 支持传入考试名或ID
+        result = []
+        for i in original:
+            result.append(
+                {
+                    'name': i.name,
+                    'id': i.id,
+                    'code': i.code
+                }
+            )
+        return status_ok(result)
     except Exception as err:
         return basic_error(err, -9, '获取考试所有学科失败')
-    result = []
-    for subj in original:
-        result.append(
-            {
-                'name': subj.name,
-                'id': subj.id,
-                'code': subj.code
-            }
-        )
-    return status_ok(result)
 
 
 # 以下为教师端接口
