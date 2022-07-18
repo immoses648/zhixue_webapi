@@ -191,19 +191,6 @@ def web_get_exams(request):
         return basic_error(err, -7, '获取所有考试失败')
 
 
-# def web_get_original(request):
-#     stu = stu_login(request)
-#     get_exam_name = request.GET.get('exam')
-#     get_subject = request.GET.get('subject')
-#     try:
-#         result = stu.get_original(get_exam_name, get_subject)
-#         if len(result) == 0:
-#             return basic_error(Exception("无法获取原卷"), -7, '尝试获得原始成绩失败', stu)
-#         return status_ok(result)
-#     except Exception as err:
-#         return basic_error(err, -7, '尝试获得考试原卷失败', stu)
-
-
 # 获取学生成绩
 def web_get_self_mark(request):
     try:
