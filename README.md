@@ -1,4 +1,5 @@
 # 智学网WebAPI
+## Python最低版本为3.8
 
 ## 文档
 [语雀](https://www.yuque.com/immoses/ns0n2t/vobe8g)
