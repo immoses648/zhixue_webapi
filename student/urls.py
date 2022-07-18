@@ -8,7 +8,7 @@ urlpatterns = [
     path('classmates/', web_get_classmates, name='get_classmates'),
     path('exam/', web_get_exam, name='get_exam'),
     path('exams/', web_get_exams, name='get_exams'),
-    path('original/', web_get_original, name='get_original'),
+    # path('original/', web_get_original, name='get_original'),
     path('mark/', web_get_self_mark, name='get_self_mark'),
     path('allSubject/', web_get_all_subjects, name='get_all_subjects')
 ]
