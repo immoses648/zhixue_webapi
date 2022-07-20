@@ -1,5 +1,5 @@
 from zhixuewang import login as zxw_login
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 import json
 
 
@@ -25,7 +25,7 @@ def status_ok(result: object) -> object:
         },
         'result': result
     }
-    return JsonResponse(json.dumps(ret, indent=2, ensure_ascii=False))
+    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False))
 
 
 # 学生登录
@@ -242,18 +242,46 @@ def web_get_all_subjects(request):
         stu = stu_login(request)
     except Exception as err:
         return basic_error(err, -1, '登录学生账号失败')
-    get_exam = request.GET.get('exam')
-    if not get_exam:
+    req_get_exam = request.GET.get('exam')
+    # r = stu._session.get("https://www.zhixue.com/zhixuebao/report/exam/getLevelTrend", params={
+    #     "examId": exam_id,
+    #     "pageIndex": "1",
+    #     "pageSize": "5",
+    #     "paperId": "5582bdbc-32d6-4497-9863-26e8bd93ed6f"
+    # }, headers=self._get_auth_header())
+    # data = r.json()
+    # if data["errorCode"] != 0:
+    #     return
+    # return {
+    #     "class": data["result"]["list"][0]["dataList"][0]["totalNum"],
+    #     "grade": data["result"]["list"][1]["dataList"][0]["totalNum"],
+    #     "exam": data["result"]["list"][2]["dataList"][0]["totalNum"]
+    # }
+    if not req_get_exam:
         return basic_error(Exception("必传参数错误"), -9, '获取所有科目失败')
     try:
-        original = stu.get_subjects(get_exam)  # 支持传入考试名或ID
+        original = stu.get_subjects(req_get_exam)  # 支持传入考试名或ID
+        exam_id = stu.get_exam(req_get_exam).id
         result = []
         for i in original:
+            r = stu._session.get("https://www.zhixue.com/zhixuebao/report/exam/getLevelTrend", params={
+                "examId": exam_id,
+                "pageIndex": "1",
+                "pageSize": "5",
+                "paperId": i.code
+            }, headers=stu._get_auth_header())
+            data = r.json()
+            if data["errorCode"] != 0:
+                return
             result.append(
                 {
                     'name': i.name,
                     'id': i.id,
-                    'code': i.code
+                    'code': i.code,
+                    'standardScore': i.standard_score,
+                    'classCount': data["result"]["list"][0]["dataList"][0]["statTotalNum"],
+                    'gradeCount': data["result"]["list"][1]["dataList"][0]["statTotalNum"],
+                    'examCount': data["result"]["list"][2]["dataList"][0]["totalNum"]
                 }
             )
         return status_ok(result)
