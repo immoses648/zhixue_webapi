@@ -257,8 +257,14 @@ def web_get_all_subjects(request):
                 "paperId": i.code
             }, headers=stu._get_auth_header())
             data = r.json()
-            if data["errorCode"] != 0:
-                return
+            try:
+                gradeCount = data["result"]["list"][1]["dataList"][0]["statTotalNum"]
+            except:
+                gradeCount = 0
+            try:
+                examCount = data["result"]["list"][2]["dataList"][0]["totalNum"]
+            except:
+                examCount = 0
             result.append(
                 {
                     'name': i.name,
@@ -266,8 +272,8 @@ def web_get_all_subjects(request):
                     'code': i.code,
                     'standardScore': i.standard_score,
                     'classCount': data["result"]["list"][0]["dataList"][0]["statTotalNum"],
-                    'gradeCount': data["result"]["list"][1]["dataList"][0]["statTotalNum"],
-                    'examCount': data["result"]["list"][2]["dataList"][0]["totalNum"]
+                    'gradeCount': gradeCount,
+                    'examCount': examCount
                 }
             )
         return status_ok(result)
