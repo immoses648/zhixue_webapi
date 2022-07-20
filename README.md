@@ -19,7 +19,5 @@ python ./manage.py runserver
 
 ### 📖文档
 
-语雀：[这里](https://www.yuque.com/immoses/ns0n2t/vobe8g)
-
 Apifox：[这里](https://www.apifox.cn/apidoc/shared-87be9a7f-9724-4b03-97a6-94f5905cc8e4)
 
