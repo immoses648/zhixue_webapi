@@ -243,20 +243,6 @@ def web_get_all_subjects(request):
     except Exception as err:
         return basic_error(err, -1, '登录学生账号失败')
     req_get_exam = request.GET.get('exam')
-    # r = stu._session.get("https://www.zhixue.com/zhixuebao/report/exam/getLevelTrend", params={
-    #     "examId": exam_id,
-    #     "pageIndex": "1",
-    #     "pageSize": "5",
-    #     "paperId": "5582bdbc-32d6-4497-9863-26e8bd93ed6f"
-    # }, headers=self._get_auth_header())
-    # data = r.json()
-    # if data["errorCode"] != 0:
-    #     return
-    # return {
-    #     "class": data["result"]["list"][0]["dataList"][0]["totalNum"],
-    #     "grade": data["result"]["list"][1]["dataList"][0]["totalNum"],
-    #     "exam": data["result"]["list"][2]["dataList"][0]["totalNum"]
-    # }
     if not req_get_exam:
         return basic_error(Exception("必传参数错误"), -9, '获取所有科目失败')
     try:
