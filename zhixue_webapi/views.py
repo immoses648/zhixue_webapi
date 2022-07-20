@@ -1,9 +1,9 @@
 from zhixuewang import login as zxw_login
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseBadRequest
 import json
 
 
-def basic_error(error: Exception, code: int, err_msg: str) -> HttpResponse:
+def basic_error(error: Exception, code: int, err_msg: str) -> object:
     """
     抛出基本错误
     """
@@ -25,7 +25,7 @@ def status_ok(result: object) -> object:
         },
         'result': result
     }
-    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False), content_type='application/json')
+    return JsonResponse(json.dumps(ret, indent=2, ensure_ascii=False))
 
 
 # 学生登录
