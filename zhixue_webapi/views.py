@@ -364,103 +364,18 @@ def web_get_school_exam_classes(request):
     except Exception as err:
         return basic_error(err, -103, '获取参考班级失败')
 
-
-# 获取全部分数
-def web_get_scores(request):
+# 获取原卷
+def web_get_original_paper(request):
     teacher = teacher_login(request)
-    exam_id = request.GET.get('exam')
-    if not exam_id:
-        return basic_error(Exception("缺少必传参数"), -105, '获取考试成绩失败')
+    stu_id = request.GET.get('stu')
+    subject_id = request.GET.get('topic')
+    if not subject_id or not stu_id:
+        return basic_error(Exception("缺少必传参数"), -106, '获取原卷失败')
     try:
-        original = teacher.get_scores(exam_id)
-        result = []
-        for i in original:
-            stu_scores = []
-            for j in i:
-                stu_scores.append({
-                    "score": j.score,
-                    "subject": {
-                        "name": j.subject.name,
-                        "code": j.subject.code,
-                        "id": j.subject.id,
-                        "standardScore": j.subject.standard_score,
-
-                    },
-                    "person": {
-                        "id": j.person.id,
-                        "class": {
-                            "id": j.person.clazz.id,
-                            "name": j.person.clazz.name,
-                            "school": {
-                                "id": j.person.clazz.school.id,
-                                "name": j.person.clazz.school.name
-                            }
-                        },
-                        "name": j.person.name,
-                        "gender": str(j.person.gender)
-                    },
-                    "classRank": j.class_rank,
-                    "gradeRank": j.grade_rank,
-                    "examRank": j.exam_rank,
-                })
-            result.append(stu_scores)
-        return status_ok(result)
+        data = teacher._session.get("https://www.zhixue.com/classreport/class/student/checksheet/", params={
+            "userId": stu_id,
+            "paperId": subject_id,
+        })
+        return HttpResponse(data.text.replace("//static.zhixue.com", "https://static.zhixue.com"))
     except Exception as err:
-        return basic_error(err, -104, '获取考试成绩失败')
-
-
-# 获取考试额外数据
-def web_get_exam_extra_data(request):
-    teacher = teacher_login(request)
-    exam_id = request.GET.get('exam')
-    if not exam_id:
-        return basic_error(Exception("缺少必传参数"), -105, '获取考试额外数据失败')
-    try:
-        original = teacher.get_exam_extra_data(teacher.get_scores(exam_id))
-        result = []
-        for i in original:
-            class_data = []
-            school_data = []
-            for j in i.class_extra_data:
-                class_data.append({
-                    "avgScore": j.avg_score,
-                    "mediumScore": j.medium_score,
-                    "passRate": j.pass_rate,
-                    "excellentRate": j.excellent_rate,
-                    "perfectRate": j.perfect_rate,
-                    "var": j.var,
-                    "classID": j.class_id,
-                    "className": j.class_name,
-                })
-            for k in i.school_extra_data:
-                school_data.append({
-                    "avgScore": k.avg_score,
-                    "mediumScore": k.medium_score,
-                    "passRate": k.pass_rate,
-                    "excellentRate": k.excellent_rate,
-                    "perfectRate": k.perfect_rate,
-                    "var": k.var,
-                    "schoolID": k.school_id,
-                    "schoolName": k.school_name,
-                })
-            result.append({
-                "subject": {
-                    "name": i.subject.name,
-                    "code": i.subject.code,
-                    "id": i.subject.id,
-                    "standardScore": i.subject.standard_score,
-                },
-                "classExtraData": class_data,
-                "schoolExtraData": school_data,
-                "examExtraData": {
-                    "avgScore": i.exam_extra_data.avg_score,
-                    "mediumScore": i.exam_extra_data.medium_score,
-                    "passRate": i.exam_extra_data.pass_rate,
-                    "excellentRate": i.exam_extra_data.excellent_rate,
-                    "perfectRate": i.exam_extra_data.perfect_rate,
-                    "var": i.exam_extra_data.var,
-                },
-            })
-        return status_ok(result)
-    except Exception as err:
-        return basic_error(err, -104, '获取考试额外数据失败')
+        return basic_error(err, -103, '获取原卷失败')
