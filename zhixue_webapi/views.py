@@ -1,6 +1,7 @@
 from zhixuewang import login as zxw_login
 from django.http import HttpResponse, HttpResponseBadRequest
 import json
+import re
 
 
 def basic_error(error: Exception, code: int, err_msg: str) -> object:
@@ -312,7 +313,7 @@ def web_get_marking_progress(request):
     subject_id = request.GET.get('subject')
     school_id = request.GET.get('school')
     if not subject_id or not school_id:
-        return basic_error(Exception("缺少必传参数"), -105, '获取考试阅卷情况失败')
+        return basic_error(Exception("缺少必传参数"), -102, '获取考试阅卷情况失败')
     try:
         original = teacher.get_marking_progress(subject_id, school_id)
         result = []
@@ -348,7 +349,7 @@ def web_get_school_exam_classes(request):
     school_id = request.GET.get('school')
     subject_id = request.GET.get('topic')
     if not school_id or not subject_id:
-        return basic_error(Exception("缺少必传参数"), -105, '获取参考班级失败')
+        return basic_error(Exception("缺少必传参数"), -103, '获取参考班级失败')
     try:
         original = teacher.get_school_exam_classes(school_id, subject_id)
         result = []
@@ -370,7 +371,7 @@ def web_get_original_paper(request):
     stu_id = request.GET.get('stu')
     subject_id = request.GET.get('topic')
     if not subject_id or not stu_id:
-        return basic_error(Exception("缺少必传参数"), -106, '获取原卷失败')
+        return basic_error(Exception("缺少必传参数"), -104, '获取原卷失败')
     try:
         data = teacher._session.get("https://www.zhixue.com/classreport/class/student/checksheet/", params={
             "userId": stu_id,
@@ -378,4 +379,26 @@ def web_get_original_paper(request):
         })
         return HttpResponse(data.text.replace("//static.zhixue.com", "https://static.zhixue.com"))
     except Exception as err:
-        return basic_error(err, -103, '获取原卷失败')
+        return basic_error(err, -104, '获取原卷失败')
+
+
+# 获取一个分数
+def web_get_one_score(request):
+    teacher = teacher_login(request)
+    stu_id = request.GET.get('stu')
+    subject_id = request.GET.get('topic')
+    if not subject_id or not stu_id:
+        return basic_error(Exception("缺少必传参数"), -105, '获取分数失败')
+    try:
+        data = json.loads(
+            re.findall(r'var sheetDatas = (.*?);',
+                       teacher._session.get("https://www.zhixue.com/classreport/class/student/checksheet/", params={
+                           "userId": stu_id,
+                           "paperId": subject_id
+                       }).text)[0])["userAnswerRecordDTO"]["answerRecordDetails"]
+        score = 0.0
+        for i in data:
+            score += i["score"]
+        return status_ok(score)
+    except Exception as err:
+        return basic_error(err, -105, '获取分数失败')

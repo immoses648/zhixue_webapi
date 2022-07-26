@@ -19,5 +19,6 @@ urlpatterns = (
     path('teacher/examDetail', web_get_exam_detail, name="get_exam_detail"),
     path('teacher/progress', web_get_marking_progress, name="get_marking_progress"),
     path('teacher/examClasses', web_get_school_exam_classes, name="get_school_exam_classes"),
-    path('teacher/scores', web_get_original_paper, name="get_original_paper"),
+    path('teacher/original', web_get_original_paper, name="get_original_paper"),
+    path('teacher/score', web_get_one_score, name="get_one_score"),
 )
