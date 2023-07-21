@@ -57,7 +57,7 @@ def web_student(request):
     try:
         result = {
             'id': stu.id,
-            'class':
+            'clazz':
                 {
                     'id': stu.clazz.id,
                     'name': stu.clazz.name,
@@ -133,7 +133,7 @@ def web_get_classmates(request):
         for i in original:
             result.append({
                 'id': i.id,
-                'class': {
+                'clazz': {
                     'id': i.clazz.id,
                     'name': i.clazz.name,
                     'school': {
@@ -221,7 +221,7 @@ def web_get_self_mark(request):
             "person": {
                 "name": original.person.name,
                 "id": original.person.id,
-                "class": {
+                "clazz": {
                     "name": original.person.clazz.name,
                     "id": original.person.clazz.id,
                     "school": {
