@@ -26,7 +26,7 @@ def status_ok(result: object) -> object:
         },
         'result': result
     }
-    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False))
+    return HttpResponse(json.dumps(ret, indent=2, ensure_ascii=False), content_type='application/json')
 
 
 # 学生登录
